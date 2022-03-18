@@ -10,17 +10,16 @@ while True:
     ret, cvFrame = cap.read()
 
     img = cv2.cvtColor(cvFrame, cv2.COLOR_BGR2RGB)
-    pillowImage = PIL.ImageOps.invert(Image.fromarray(img))
+    pillowImage = Image.fromarray(img)
 
     # Process the image using PIL
 
-    pillowImage = PIL.ImageOps.invert(pillowImage)
+    # pillowImage = PIL.ImageOps.invert(pillowImage)
 
     # pillowImage.show()
     # pillowSaved = pillowImage.save(f"images/webcamFrame{i}.png")
 
-    cvImage = np.asarray(pillowImage)
-
+    cvImage = cv2.cvtColor(np.asarray(pillowImage), cv2.COLOR_RGB2BGR) 
     cv2.imshow('Video', cvImage)
     if cv2.waitKey(1) == 27:
         exit(0)
