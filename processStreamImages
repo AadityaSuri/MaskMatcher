@@ -1,0 +1,28 @@
+import cv2
+import numpy as np
+from PIL import Image
+import PIL.ImageOps   
+cap = cv2.VideoCapture('http://192.168.107.182:8081/')
+
+
+i=0
+while True:
+    ret, cvFrame = cap.read()
+
+    img = cv2.cvtColor(cvFrame, cv2.COLOR_BGR2RGB)
+    pillowImage = PIL.ImageOps.invert(Image.fromarray(img))
+
+    # Process the image using PIL
+
+    pillowImage = PIL.ImageOps.invert(pillowImage)
+
+    # pillowImage.show()
+    # pillowSaved = pillowImage.save(f"images/webcamFrame{i}.png")
+
+    cvImage = np.asarray(pillowImage)
+
+    cv2.imshow('Video', cvImage)
+    if cv2.waitKey(1) == 27:
+        exit(0)
+    
+    i+=1
