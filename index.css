@@ -56,7 +56,6 @@
   border-radius: 10px;
   border: 2px solid black;
   overflow:hidden;
-  width: 400px;
 }
 
  .ck-button:hover {
@@ -76,6 +75,20 @@
 
 .ck-button input:checked + span {
   background-color:#88FF88;
+  color:black;
+} 
+
+.ck-button1{
+  width: 400px;
+}
+
+.ck-button2{
+  width:800px;
+  background-color: #88FF88;
+}
+
+.ck-button2 input:checked + span {
+  background-color: red;
   color:black;
 } 
 
