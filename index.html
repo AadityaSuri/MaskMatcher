@@ -1,29 +1,78 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="index.css">
 </head>
+
 <body>
+  <div class="whole-site">
+    <div class="site-header">
 
-      <label class="switch" >
-        <input type="checkbox" id = "myCheck" onclick="myFunction()">
-        <span class="slider round"></span>
-      </label>
-      
-      <p id="text" style="display:none">Checkbox is CHECKED!</p>
+    </div>
+    <div class="site-row-1">
+
+    </div>
+    <div class="site-row-2">
+      <div class="ck-button">
+        <label>
+          <input type="checkbox" id="maskMode" onclick="maskModeToggle()">
+          <span id="maskModeText" style="display:block">MaskMode OFF</span>
+        </label>
+      </div>
+      <div class="ck-button">
+        <label>
+          <input type="checkbox" id="lockMode" onclick="lockModeToggle()">
+          <span id="lockModeText" style="display:block"> LOCKED </span>
+        </label>
+      </div>
+    </div>
+    <div class="site-row-3">
+      <div class="ck-button">
+        <label>
+          <input type="checkbox" id="override" onclick="override()">
+          <span id="overridetext" style="display:block"> NOT OVERRIDEN </span>
+        </label>
+      </div>
 
 
-      <script>
-        function myFunction() {
-          var checkBox = document.getElementById("myCheck");
-          var text = document.getElementById("text");
-          if (checkBox.checked == true){
-            text.style.display = "block";
-          } else {
-             text.style.display = "none";
-          }
-        }
-        </script>
-
+    </div>
+  </div>
 </body>
+
+
+<script>
+  function maskModeToggle() {
+    var checkBox = document.getElementById("maskMode");
+    var text = document.getElementById("maskModeText");
+    if (checkBox.checked == true) {
+      text.textContent = "MaskMode  ON"
+    } else {
+      text.textContent = "MaskMode OFF";
+    }
+  }
+
+  function lockModeToggle() {
+    var checkBox = document.getElementById("lockMode");
+    var text = document.getElementById("lockModeText");
+    if (checkBox.checked == true) {
+      text.textContent = "UNLOCKED"
+    } else {
+      text.textContent = " LOCKED ";
+    }
+  }
+
+  function override() {
+    var checkBox = document.getElementById("override");
+    var text = document.getElementById("overridetext");
+    if (checkBox.checked == true) {
+      text.textContent = "LOCK OVERRIDDEN"
+    } else {
+      text.textContent = "NOT OVERRIDDEN";
+    }
+  }
+
+
+</script>
+
 </html>
