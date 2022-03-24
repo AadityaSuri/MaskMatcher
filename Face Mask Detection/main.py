@@ -10,7 +10,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 
 transform = transforms.Compose(
-    [transforms.Resize((32, 32)),
+    [transforms.Resize((64, 64)),
      # transforms.Grayscale(3),
      transforms.ToTensor(),
      transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
@@ -54,11 +54,11 @@ class CNN(nn.Module):
         super(CNN, self).__init__()
         self.flatten = nn.Flatten()
         self.linear_relu_stack = nn.Sequential(
-            nn.Linear(3*32*32, 512),
+            nn.Linear(3*64*64, 512),
             nn.ReLU(),
             nn.Linear(512, 512),
             nn.ReLU(),
-            nn.Linear(512, 10)
+            nn.Linear(512, 2)
         )
 
     def forward(self, x):
@@ -126,8 +126,8 @@ for t in range(epochs):
     test(test_dl, model, loss_fn)
 print("Done!")
 
-# torch.save(model.state_dict(), "model.pth")
-# print("Saved PyTorch Model State to model.pth")
+torch.save(model.state_dict(), "model.pth")
+print("Saved PyTorch Model State to model.pth")
 #
 # # Using the model for some testing
 # model = CNN()
@@ -142,5 +142,4 @@ print("Done!")
 #         pred = model(x)
 #         predicted, actual = classes[pred[0].argmax(0)], classes[y]
 #         print(f'Predicted: "{predicted}", Actual: "{actual}"')
-
 
