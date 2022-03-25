@@ -8,40 +8,47 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torch.utils.data import DataLoader
+from PIL import Image
 
 transform = transforms.Compose(
-    [transforms.Resize((32, 32)),
+    [transforms.Resize((64, 64)),
      transforms.Grayscale(1),
-     transforms.ToTensor()]
-     #transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
+     transforms.ToTensor(),
+     transforms.Normalize((0.5), (0.5))]
 )
 
+transform_3 = transforms.Compose(
+    [transforms.Resize((64, 64)),
+     #transforms.Grayscale(),
+     transforms.ToTensor(),
+     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
+)
 batch_size = 8
 
-train_ds = tv.datasets.ImageFolder("./dataset/train", transform)
-test_ds = tv.datasets.ImageFolder("./dataset/test", transform)
+train_ds = tv.datasets.ImageFolder("./dataset/train", transform_3)
+test_ds = tv.datasets.ImageFolder("./dataset/test", transform_3)
 
 train_dl = DataLoader(train_ds, batch_size, shuffle=True, num_workers = 0)
 test_dl = DataLoader(test_ds, batch_size, shuffle=True, num_workers = 0)
 
 classes = ("with_mask", "without_mask")
 # #
-# # def imshow(img):
-# #   ''' function to show image '''
-# #   img = img / 2 + 0.5 # unnormalize
-# #   npimg = img.numpy() # convert to numpy objects
-# #   plt.imshow(np.transpose(npimg, (1, 2, 0)))
-# #   plt.show()
-# #
-# # # get random training images with iter function
-# # # dataiter = iter(train_dl)
-# # # images, labels = dataiter.next()
-# # images, labels = next(iter(train_dl))
-# #
-# # print(' '.join('%s' % classes[labels[j]] for j in range(batch_size)))
-# # # call function on our images
-# # imshow(tv.utils.make_grid(images))
+# def imshow(img):
+#   ''' function to show image '''
+#   img = img / 2 + 0.5 # unnormalize
+#   npimg = img.numpy() # convert to numpy objects
+#   plt.imshow(np.transpose(npimg, (1, 2, 0)))
+#   plt.show()
 #
+# # get random training images with iter function
+# # dataiter = iter(train_dl)
+# # images, labels = dataiter.next()
+# images, labels = next(iter(train_dl))
+#
+# print(' '.join('%s' % classes[labels[j]] for j in range(batch_size)))
+# # call function on our images
+# imshow(tv.utils.make_grid(images))
+
 
 # Get cpu or gpu device for training.
 device = "cuda" if torch.cuda.is_available() else "cpu" #selects device to run NN on, if GPU is available, prints "cuda", otherwise "cpu"
@@ -49,17 +56,10 @@ print("Using {} device".format(device)) # print statement for above device varia
 
 class CNN(nn.Module):
     def __init__(self):
-        # super().__init__()
-        # self.conv1 = nn.Conv2d(3, 6, 5)
-        # self.pool = nn.MaxPool2d(2, 2)
-        # self.conv2 = nn.Conv2d(6, 16, 5)
-        # self.fc1 = nn.Linear(16 * 5 * 5, 120)
-        # self.fc2 = nn.Linear(120, 84)
-        # self.fc3 = nn.Linear(84, 2)
         super(CNN, self).__init__()
         self.flatten = nn.Flatten()
         self.linear_relu_stack = nn.Sequential(
-            nn.Linear(32*32, 512),
+            nn.Linear(64*64*3, 512),
             nn.ReLU(),
             nn.Linear(512, 512),
             nn.ReLU(),
@@ -69,14 +69,10 @@ class CNN(nn.Module):
         )
 
     def forward(self, x):
-        # x = self.pool(F.relu(self.conv1(x)))
-        # x = self.pool(F.relu(self.conv2(x)))
-        # x = torch.flatten(x, 1) # flatten all dimensions except batch
-        # x = F.relu(self.fc1(x))
-        # x = F.relu(self.fc2(x))
-        # x = self.fc3(x)
-        # return x
-        x = self.flatten(x)
+        print(x.shape)
+        x = torch.flatten(x, start_dim=1)
+        print(x.shape)
+
         logits = self.linear_relu_stack(x)
         return logits
 
@@ -123,28 +119,42 @@ def test(dataloader, model, loss_fn):
     correct /= size
     print(f"Test Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")
 
-
-epochs = 10   #starting with 5 epochs --> may need to adjust
-for t in range(epochs):
-    print(f"Epoch {t+1}\n-------------------------------")
-    train(train_dl, model, loss_fn, optimizer)
-    test(test_dl, model, loss_fn)
-print("Done!")
-torch.save(model.state_dict(), "model.pth")
-print("Saved PyTorch Model State to model.pth")
+#
+# epochs = 2   #starting with 5 epochs --> may need to adjust
+# for t in range(epochs):
+#     print(f"Epoch {t+1}\n-------------------------------")
+#     train(train_dl, model, loss_fn, optimizer)
+#     test(test_dl, model, loss_fn)
+# print("Done!")
+# torch.save(model.state_dict(), "model.pth")
+# print("Saved PyTorch Model State to model.pth")
 
 # Using the model for some testing
 model = CNN()
 model.load_state_dict(torch.load("model.pth"))
 
 model.eval()
+# # #
+counter = 0
+n = 3000
+for i in range(n):
 
-for i in range(750):
-
-    x, y = test_ds[i][0], test_ds[i][1]
+    x, y = train_ds[i][0], train_ds[i][1]
+    print(x.shape)
     with torch.no_grad():
-        pred = model(x)
+        pred = model(x.reshape((1,64,64,3)))
         predicted, actual = classes[pred[0].argmax(0)], classes[y]
         print(f'Predicted: "{predicted}", Actual: "{actual}"')
+        if predicted == actual:
+            counter = counter + 1
 
+print(counter/n)
+
+# img = Image.open("Joe_Biden_presidential_portrait.jpg")
+# x = transform_3(img)
+# x = x.unsqueeze(0)
+#
+# output = model(x)  # Forward pass
+# pred = torch.argmax(output, 1)  # Get predicted class if multi-class classification
+# print('Image predicted as', classes[pred])
 
