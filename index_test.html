@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+  <div class="whole-site">
+    <div class="site-header">
+    
+
+    </div>
+    <div class="site-row-1">
+      <iframe width="800" height="600"
+      src="https://www.youtube.com/embed/tgbNymZ7vqY">
+      </iframe>
+    </div>
+    <div class = "site-spacing-1"></div>
+    <div class="site-row-2">
+      <div class="ck-button ck-button1">
+        <label>
+          <input type="checkbox" id="maskMode" onclick="maskModeToggle()" disabled = "disabled">
+          <span id="maskModeText" style="display:block">MaskMode OFF</span>
+        </label>
+      </div>
+      <div class="ck-button ck-button1">
+        <label>
+          <input type="checkbox" id="lockMode" onclick="lockModeToggle()">
+          <span id="lockModeText" style="display:block"> LOCKED </span>
+        </label>
+      </div>
+    </div>
+    <div class = "site-spacing-1"></div>
+    <div class="site-row-3">
+      <div class="ck-button ck-button2">
+        <label>
+          <input type="checkbox" id="override" onclick="override()">
+          <span id="overridetext" style="display:block"> NOT OVERRIDDEN </span>
+        </label>
+      </div>
+
+
+    </div>
+  </div>
+</body>
+
+
+<script>
+  function maskModeToggle() {
+    var checkBox = document.getElementById("maskMode");
+    var text = document.getElementById("maskModeText");
+    if (checkBox.checked == true) {
+      text.textContent = "MaskMode  ON"
+    } else {
+      text.textContent = "MaskMode OFF";
+    }
+  }
+
+  function lockModeToggle() {
+    var checkBox = document.getElementById("lockMode");
+    var text = document.getElementById("lockModeText");
+    if (checkBox.checked == true) {
+      text.textContent = "UNLOCKED"
+      document.getElementById("maskMode").disabled = false;
+    } else {
+      text.textContent = " LOCKED ";
+      document.getElementById("maskMode").disabled = true;
+    }
+  }
+
+  function override() {
+    var checkBox = document.getElementById("override");
+    var text = document.getElementById("overridetext");
+    if (checkBox.checked == true) {
+      text.textContent = "LOCK OVERRIDDEN"
+      document.getElementById("maskMode").disabled = true;
+      document.getElementById("lockMode").disabled = true;
+    } else {
+      text.textContent = "NOT OVERRIDDEN";
+      document.getElementById("maskMode").disabled = false;
+      document.getElementById("lockMode").disabled = false;
+    }
+  }
+
+  function test() {}
+
+
+</script>
+
+</html>
