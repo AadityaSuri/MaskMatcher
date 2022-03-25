@@ -3,7 +3,7 @@ import numpy as np
 from PIL import Image
 import PIL.ImageOps   
 import time
-cap = cv2.VideoCapture('http://192.168.106.182:8081/')
+cap = cv2.VideoCapture('http://192.168.92.182:8081/')
 
 
 i=0

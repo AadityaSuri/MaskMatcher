@@ -1,11 +1,11 @@
 import socket
 from PIL import Image
 
-serverHost = "127.0.0.1"  # Standard loopback interface address (localhost)
+serverHost = "192.168.106.137"  # Standard loopback interface address (localhost)
 serverPort = 65432  # Port to listen on (non-privileged ports are > 1023)
+# 192.168.106.244
 
-
-with open('received_file.png', 'wb') as f:
+with open('received_file123.png', 'wb') as f:
     print("file opened")
     with socket.socket() as s:
         s.bind((serverHost, serverPort))
