@@ -48,14 +48,6 @@
 
 }
 
-
-/* .button-row-2 {
-  display: flex;
-  height: TBA by Joshua
-  width: TBA by Joshua;
-}
- */
-
 .ck-button {
   background-color: red;
   border-radius: 10px;
@@ -97,8 +89,8 @@
   color:black;
 } 
 
-.ck-button label input[type="checkbox"][disabled]:checked + span {
-  background-color: pink;
+.ck-button label input[type="checkbox"][disabled] + span {
+  background-color: grey;
 }
 
 

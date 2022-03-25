@@ -8,11 +8,15 @@
 <body>
   <div class="whole-site">
     <div class="site-header">
+    
 
     </div>
     <div class="site-row-1">
-
+      <iframe width="800" height="600"
+      src="https://www.youtube.com/embed/tgbNymZ7vqY">
+      </iframe>
     </div>
+    <div class = "site-spacing-1"></div>
     <div class="site-row-2">
       <div class="ck-button ck-button1">
         <label>
@@ -58,8 +62,10 @@
     var text = document.getElementById("lockModeText");
     if (checkBox.checked == true) {
       text.textContent = "UNLOCKED"
+      document.getElementById("maskMode").disabled = false;
     } else {
       text.textContent = " LOCKED ";
+      document.getElementById("maskMode").disabled = true;
     }
   }
 
@@ -68,8 +74,12 @@
     var text = document.getElementById("overridetext");
     if (checkBox.checked == true) {
       text.textContent = "LOCK OVERRIDDEN"
+      document.getElementById("maskMode").disabled = true;
+      document.getElementById("lockMode").disabled = true;
     } else {
       text.textContent = "NOT OVERRIDDEN";
+      document.getElementById("maskMode").disabled = false;
+      document.getElementById("lockMode").disabled = false;
     }
   }
 
