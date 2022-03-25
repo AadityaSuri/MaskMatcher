@@ -69,9 +69,9 @@ class CNN(nn.Module):
         )
 
     def forward(self, x):
-        print(x.shape)
+        # print(x.shape)
         x = torch.flatten(x, start_dim=1)
-        print(x.shape)
+        # print(x.shape)
 
         logits = self.linear_relu_stack(x)
         return logits
@@ -136,19 +136,21 @@ model.load_state_dict(torch.load("model.pth"))
 model.eval()
 # # #
 counter = 0
-n = 3000
-for i in range(n):
+n = 800
+for i in range(400, n):
 
-    x, y = train_ds[i][0], train_ds[i][1]
-    print(x.shape)
+    x, y = test_ds[i][0], test_ds[i][1]
+    # print(x.shape)
     with torch.no_grad():
         pred = model(x.reshape((1,64,64,3)))
         predicted, actual = classes[pred[0].argmax(0)], classes[y]
-        print(f'Predicted: "{predicted}", Actual: "{actual}"')
+
+        if predicted != actual:
+            print(f'Predicted: "{predicted}", Actual: "{actual}"')
         if predicted == actual:
             counter = counter + 1
 
-print(counter/n)
+print(counter/(n-400))
 
 # img = Image.open("Joe_Biden_presidential_portrait.jpg")
 # x = transform_3(img)
