@@ -1,6 +1,7 @@
   /*LAYOUT STYLING*/
 
   .whole-site{
+    font-family: Arial;
     display: flex;
     flex-direction: column;
     align-content: left;
@@ -11,14 +12,15 @@
 
 .site-header{
   display: flex;
-  height: 10%;
   width: 100%;
 }
 
-.video-box {
-  display: flex;
-  height: 1080 px;
-  width: 1920 px;
+.site-header-text {
+  text-align: center;
+  text-justify: top;
+  color: black;
+  width: 800px;
+  font-size: 2em;
 }
 
 .site-row-1{
@@ -49,7 +51,6 @@
 }
 
 .ck-button {
-  background-color: red;
   border-radius: 10px;
   border: 2px solid black;
   overflow:hidden;
@@ -70,12 +71,13 @@
   top:-20px;
 }
 
-.ck-button input:checked + span {
-  background-color:#88FF88;
-  color:black;
-} 
-
 .ck-button1{
+  width: 400px;
+  background-color: red;
+}
+
+.ck-button3{
+  background-color: grey;
   width: 400px;
 }
 
@@ -84,13 +86,9 @@
   background-color: #88FF88;
 }
 
-.ck-button2 input:checked + span {
-  background-color: red;
-  color:black;
-} 
 
-.ck-button label input[type="checkbox"][disabled] + span {
+/* .ck-button label input[type="checkbox"][disabled] + span {
   background-color: grey;
-}
+} */
 
 

@@ -7,9 +7,8 @@
 
 <body>
   <div class="whole-site">
-    <div class="site-header">
-    
-
+    <div class="site-header-text">
+      <p>MaskMatcher Dashboard</p>
     </div>
     <div class="site-row-1">
       <iframe width="800" height="600"
@@ -18,13 +17,13 @@
     </div>
     <div class = "site-spacing-1"></div>
     <div class="site-row-2">
-      <div class="ck-button ck-button1">
+      <div class="ck-button ck-button3" id = "maskModeBG">
         <label>
           <input type="checkbox" id="maskMode" onclick="maskModeToggle()" disabled = "disabled">
           <span id="maskModeText" style="display:block">MaskMode OFF</span>
         </label>
       </div>
-      <div class="ck-button ck-button1">
+      <div class="ck-button ck-button1" id = "lockModeBG">
         <label>
           <input type="checkbox" id="lockMode" onclick="lockModeToggle()">
           <span id="lockModeText" style="display:block"> LOCKED </span>
@@ -32,8 +31,8 @@
       </div>
     </div>
     <div class = "site-spacing-1"></div>
-    <div class="site-row-3">
-      <div class="ck-button ck-button2">
+    <div class="site-row-3" >
+      <div class="ck-button ck-button2" id ="overrideBG">
         <label>
           <input type="checkbox" id="override" onclick="override()">
           <span id="overridetext" style="display:block"> NOT OVERRIDDEN </span>
@@ -48,39 +47,67 @@
 
 <script>
   function maskModeToggle() {
-    var checkBox = document.getElementById("maskMode");
+    var maskBox = document.getElementById("maskMode");
+    var lockBox = document.getElementById("lockMode");
+    var override = document.getElementById("override")
     var text = document.getElementById("maskModeText");
-    if (checkBox.checked == true) {
-      text.textContent = "MaskMode  ON"
+    if (maskBox.checked == true) {
+      text.textContent = "MaskMode  ON";
+      backgroundColor();
     } else {
       text.textContent = "MaskMode OFF";
+      backgroundColor();
     }
   }
 
   function lockModeToggle() {
-    var checkBox = document.getElementById("lockMode");
+    var maskBox = document.getElementById("maskMode");
+    var lockBox = document.getElementById("lockMode");
+    var override = document.getElementById("override")
     var text = document.getElementById("lockModeText");
-    if (checkBox.checked == true) {
+    if (lockBox.checked == true) {
       text.textContent = "UNLOCKED"
-      document.getElementById("maskMode").disabled = false;
+      maskBox.disabled = false;
+      backgroundColor();
     } else {
       text.textContent = " LOCKED ";
-      document.getElementById("maskMode").disabled = true;
+      maskBox.disabled = true;
+      backgroundColor();
+      // document.getElementById("maskModeBG").style.backgroundColor = "grey";
     }
   }
 
   function override() {
-    var checkBox = document.getElementById("override");
+    var maskBox = document.getElementById("maskMode");
+    var lockBox = document.getElementById("lockMode");
+    var override = document.getElementById("override")
     var text = document.getElementById("overridetext");
-    if (checkBox.checked == true) {
+    if (override.checked == true) {
       text.textContent = "LOCK OVERRIDDEN"
-      document.getElementById("maskMode").disabled = true;
-      document.getElementById("lockMode").disabled = true;
+      maskBox.disabled = true;
+      lockBox.disabled = true;
+      backgroundColor();      
     } else {
       text.textContent = "NOT OVERRIDDEN";
       document.getElementById("maskMode").disabled = false;
       document.getElementById("lockMode").disabled = false;
+      backgroundColor();
     }
+  }
+
+  function backgroundColor() {
+    var maskBox = document.getElementById("maskMode");
+    var lockBox = document.getElementById("lockMode");
+    var override = document.getElementById("override")
+
+    var maskBoxBG = document.getElementById("maskModeBG");
+    var lockBoxBG = document.getElementById("lockModeBG");
+    var overrideBG = document.getElementById("overrideBG");
+    
+    maskBoxBG.style.background = override.checked ? "grey" : (lockBox.checked ? (maskBox.checked ? "#88FF88" : "red") : "grey");
+    lockBoxBG.style.background = override.checked ? "grey" : (lockBox.checked ? "red" : "#88FF88");
+    overrideBG.style.background = override.checked ? "red" : "#88FF88";
+
   }
 
 
