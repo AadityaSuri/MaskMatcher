@@ -28,6 +28,11 @@
 
 }
 
+.site-spacing-1{
+  width: 100%;
+  height: 10px;
+}
+
 .site-row-2{
   display: flex;
   height: 50%;
@@ -42,14 +47,6 @@
   width: 100%;
 
 }
-
-
-/* .button-row-2 {
-  display: flex;
-  height: TBA by Joshua
-  width: TBA by Joshua;
-}
- */
 
 .ck-button {
   background-color: red;
@@ -91,5 +88,9 @@
   background-color: red;
   color:black;
 } 
+
+.ck-button label input[type="checkbox"][disabled] + span {
+  background-color: grey;
+}
 
 
