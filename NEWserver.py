@@ -10,6 +10,14 @@ async def hello(websocket):
     await websocket.send(greeting)
     print(f">>> {greeting}")
 
+    while True:
+        image = await websocket.recv()
+        # print(image)
+        print("Got image")
+
+        with open('received_file123.png', 'wb') as f:
+            f.write(image)
+
 async def main():
     async with websockets.serve(hello, "10.93.48.157", 443):
         await asyncio.Future()  # run forever
