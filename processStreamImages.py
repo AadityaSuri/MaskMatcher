@@ -3,7 +3,7 @@ import numpy as np
 from PIL import Image
 import PIL.ImageOps   
 import time
-cap = cv2.VideoCapture('http://192.168.92.182:8081/')
+cap = cv2.VideoCapture('http://192.168.92.154:8081/')
 
 
 i=0
@@ -19,7 +19,8 @@ while True:
 
     # pillowImage.show()
     # pillowSaved = pillowImage.save(f"images/webcamFrame{i}.png")
-    pillowSaved = pillowImage.save(f"webcamImage.png")
+    if (i%10 == 0):
+        pillowSaved = pillowImage.save(f"webcamImage.png")
 
     cvImage = cv2.cvtColor(np.asarray(pillowImage), cv2.COLOR_RGB2BGR) 
     cv2.imshow('Video', cvImage)

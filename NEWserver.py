@@ -11,7 +11,7 @@ async def hello(websocket):
     print(f">>> {greeting}")
 
 async def main():
-    async with websockets.serve(hello, "192.168.92.244", 8765):
+    async with websockets.serve(hello, "10.93.48.157", 443):
         await asyncio.Future()  # run forever
 
 if __name__ == "__main__":
