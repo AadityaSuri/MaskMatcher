@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <link rel="stylesheet" href="index.css">
+<link rel="stylesheet" href="{{ url_for('static', filename= 'css/style.css') }}">
 </head>
 
 <body>
@@ -11,21 +11,23 @@
       <p>MaskMatcher Dashboard</p>
     </div>
     <div class="site-row-1">
-      <iframe width="800" height="600"
+      <!-- <iframe width="800" height="600"
       src="https://www.youtube.com/embed/tgbNymZ7vqY">
-      </iframe>
+      </iframe> -->
+      <!-- <img src="../../var/www/python/received_file123.png"> -->
+      <img src="/static/css/test.png" alt="please work">
     </div>
     <div class = "site-spacing-1"></div>
     <div class="site-row-2">
       <div class="ck-button ck-button3" id = "maskModeBG">
         <label>
-          <input type="checkbox" id="maskMode" onclick="maskModeToggle()" disabled = "disabled">
+          <input type="checkbox" id="maskMode" name = "maskMode" onclick="maskModeToggle()" disabled = "disabled" method = "POST">
           <span id="maskModeText" style="display:block">MaskMode OFF</span>
         </label>
       </div>
       <div class="ck-button ck-button1" id = "lockModeBG">
         <label>
-          <input type="checkbox" id="lockMode" onclick="lockModeToggle()">
+          <input type="checkbox" id="lockMode" name = "lockMode" onclick="lockModeToggle()" method = "POST">
           <span id="lockModeText" style="display:block"> LOCKED </span>
         </label>
       </div>
@@ -34,7 +36,7 @@
     <div class="site-row-3" >
       <div class="ck-button ck-button2" id ="overrideBG">
         <label>
-          <input type="checkbox" id="override" onclick="override()">
+          <input type="checkbox" id="override" name = "override" onclick="override()" method = "POST">
           <span id="overridetext" style="display:block"> NOT OVERRIDDEN </span>
         </label>
       </div>
@@ -78,6 +80,7 @@
   }
 
   function override() {
+    
     var maskBox = document.getElementById("maskMode");
     var lockBox = document.getElementById("lockMode");
     var override = document.getElementById("override")
@@ -108,9 +111,100 @@
     lockBoxBG.style.background = override.checked ? "grey" : (lockBox.checked ? "red" : "#88FF88");
     overrideBG.style.background = override.checked ? "red" : "#88FF88";
 
+
   }
+
+
 
 
 </script>
 
+
+
+<script>
+  document.getElementById("maskMode")
+    .addEventListener("click", e => {
+      fetch("http://127.0.0.1:5000/", {
+          method: "POST",
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            maskModeVal: Number(e.target.checked)
+          })
+        })
+        .then(res => {
+          if (!res.ok) {
+            throw Error(res.status);
+          }
+
+          return res.json();
+        })
+        .then(({data: {val}}) => {
+          console.log(val);
+          const res = document.querySelector(".result");
+          res.innerText = `client got: ${val}`;
+        })
+        .catch(err => console.error(err))
+      ;
+    })
+  ;
+  document.getElementById("lockMode")
+    .addEventListener("click", e => {
+      fetch("http://127.0.0.1:5000/", {
+          method: "POST",
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            lockModeVal: Number(e.target.checked)
+          })
+        })
+        .then(res => {
+          if (!res.ok) {
+            throw Error(res.status);
+          }
+
+          return res.json();
+        })
+        .then(({data: {val}}) => {
+          console.log(val);
+          const res = document.querySelector(".result");
+          res.innerText = `client got: ${val}`;
+        })
+        .catch(err => console.error(err))
+      ;
+    })
+  ;
+  document.getElementById("override")
+    .addEventListener("click", e => {
+      fetch("http://127.0.0.1:5000/", {
+          method: "POST",
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            overrideVal: Number(e.target.checked)
+          })
+        })
+        .then(res => {
+          if (!res.ok) {
+            throw Error(res.status);
+          }
+
+          return res.json();
+        })
+        .then(({data: {val}}) => {
+          console.log(val);
+          const res = document.querySelector(".result");
+          res.innerText = `client got: ${val}`;
+        })
+        .catch(err => console.error(err))
+      ;
+    })
+  ;
+</script>
 </html>
