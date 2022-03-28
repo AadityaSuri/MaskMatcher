@@ -18,16 +18,19 @@ transform = transforms.Compose(
 )
 
 transform_3 = transforms.Compose(
-    [transforms.Resize((64, 64)),
+    [transforms.Resize((128, 128)),
      #transforms.Grayscale(),
      transforms.ToTensor(),
      transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
 )
-batch_size = 8
+batch_size = 32
 
-train_ds = tv.datasets.ImageFolder("./dataset/train", transform_3)
-test_ds = tv.datasets.ImageFolder("./dataset/test", transform_3)
+ds = tv.datasets.ImageFolder("./dataset/train_1", transform_3)
+# test_ds = tv.datasets.ImageFolder("./dataset/test", transform_3)
 
+train_size = int(0.8 * len(ds))
+test_size = int(len(ds)) - train_size
+train_ds, test_ds = torch.utils.data.random_split(ds, [train_size, test_size])
 train_dl = DataLoader(train_ds, batch_size, shuffle=True, num_workers = 0)
 test_dl = DataLoader(test_ds, batch_size, shuffle=True, num_workers = 0)
 
@@ -59,7 +62,7 @@ class CNN(nn.Module):
         super(CNN, self).__init__()
         self.flatten = nn.Flatten()
         self.linear_relu_stack = nn.Sequential(
-            nn.Linear(64*64*3, 512),
+            nn.Linear(128*128*3, 512),
             nn.ReLU(),
             nn.Linear(512, 512),
             nn.ReLU(),
@@ -67,6 +70,7 @@ class CNN(nn.Module):
             nn.ReLU(),
             nn.Linear(512, 2)
         )
+
 
     def forward(self, x):
         # print(x.shape)
@@ -76,9 +80,10 @@ class CNN(nn.Module):
         logits = self.linear_relu_stack(x)
         return logits
 
+
 #
 model = CNN().to(device)
-print(model)
+# print(model)
 
 loss_fn = nn.CrossEntropyLoss()
 optimizer = torch.optim.SGD(model.parameters(), lr = 1e-3, momentum=0.9)
@@ -120,7 +125,7 @@ def test(dataloader, model, loss_fn):
     print(f"Test Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")
 
 #
-# epochs = 2   #starting with 5 epochs --> may need to adjust
+# epochs = 10   #starting with 5 epochs --> may need to adjust
 # for t in range(epochs):
 #     print(f"Epoch {t+1}\n-------------------------------")
 #     train(train_dl, model, loss_fn, optimizer)
@@ -128,30 +133,49 @@ def test(dataloader, model, loss_fn):
 # print("Done!")
 # torch.save(model.state_dict(), "model.pth")
 # print("Saved PyTorch Model State to model.pth")
+#
+# # Using the model for some testing
+# model = CNN()
+# model.load_state_dict(torch.load("model.pth"))
+#
+# model.eval()
+#
+# actMask = 0
+# actWMask = 0
+# predMask = 0
+# predWMask = 0
+# counter = 0
+# n = len(test_ds)
+# for i in range(n):
+#
+#     x, y = test_ds[i][0], test_ds[i][1]
+#     # print(x.shape)
+#     with torch.no_grad():
+#         pred = model(x.reshape((1,128,128,3)))
+#         predicted, actual = classes[pred[0].argmax(0)], classes[y]
+#
+#         #if predicted != actual:
+#         print(f'Predicted: "{predicted}", Actual: "{actual}"')
+#         if actual == "without_mask":
+#             actWMask = actWMask + 1
+#
+#         if actual == "with_mask":
+#             actMask = actMask + 1
+#
+#         if predicted == actual and predicted == "without_mask":
+#             predWMask = predWMask + 1
+#
+#         if predicted == "with_mask" and predicted == actual:
+#             predMask = predMask + 1
+#
+#         if predicted == actual:
+#             counter = counter + 1
+#
+# print(predMask/actMask)
+# print(predWMask/actWMask)
+# print(counter/n)
 
-# Using the model for some testing
-model = CNN()
-model.load_state_dict(torch.load("model.pth"))
-
-model.eval()
-# # #
-counter = 0
-n = 800
-for i in range(400, n):
-
-    x, y = test_ds[i][0], test_ds[i][1]
-    # print(x.shape)
-    with torch.no_grad():
-        pred = model(x.reshape((1,64,64,3)))
-        predicted, actual = classes[pred[0].argmax(0)], classes[y]
-
-        if predicted != actual:
-            print(f'Predicted: "{predicted}", Actual: "{actual}"')
-        if predicted == actual:
-            counter = counter + 1
-
-print(counter/(n-400))
-
+# #
 # img = Image.open("Joe_Biden_presidential_portrait.jpg")
 # x = transform_3(img)
 # x = x.unsqueeze(0)
