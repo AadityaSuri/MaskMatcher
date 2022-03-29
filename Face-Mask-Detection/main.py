@@ -18,12 +18,12 @@ transform = transforms.Compose(
 )
 
 transform_3 = transforms.Compose(
-    [transforms.Resize((128, 128)),
+    [transforms.Resize((24, 24)),
      #transforms.Grayscale(),
      transforms.ToTensor(),
      transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
 )
-batch_size = 32
+batch_size = 16
 
 ds = tv.datasets.ImageFolder("./dataset/train_1", transform_3)
 # test_ds = tv.datasets.ImageFolder("./dataset/test", transform_3)
@@ -62,7 +62,7 @@ class CNN(nn.Module):
         super(CNN, self).__init__()
         self.flatten = nn.Flatten()
         self.linear_relu_stack = nn.Sequential(
-            nn.Linear(128*128*3, 512),
+            nn.Linear(24*24*3, 512),
             nn.ReLU(),
             nn.Linear(512, 512),
             nn.ReLU(),
@@ -124,7 +124,7 @@ def test(dataloader, model, loss_fn):
     correct /= size
     print(f"Test Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")
 
-#
+
 # epochs = 10   #starting with 5 epochs --> may need to adjust
 # for t in range(epochs):
 #     print(f"Epoch {t+1}\n-------------------------------")
@@ -133,13 +133,13 @@ def test(dataloader, model, loss_fn):
 # print("Done!")
 # torch.save(model.state_dict(), "model.pth")
 # print("Saved PyTorch Model State to model.pth")
-#
-# # Using the model for some testing
+# #
+# # # Using the model for some testing
 # model = CNN()
 # model.load_state_dict(torch.load("model.pth"))
 #
 # model.eval()
-#
+# #
 # actMask = 0
 # actWMask = 0
 # predMask = 0
@@ -151,7 +151,7 @@ def test(dataloader, model, loss_fn):
 #     x, y = test_ds[i][0], test_ds[i][1]
 #     # print(x.shape)
 #     with torch.no_grad():
-#         pred = model(x.reshape((1,128,128,3)))
+#         pred = model(x.reshape((1,24,24,3)))
 #         predicted, actual = classes[pred[0].argmax(0)], classes[y]
 #
 #         #if predicted != actual:
@@ -176,11 +176,18 @@ def test(dataloader, model, loss_fn):
 # print(counter/n)
 
 # #
-# img = Image.open("Joe_Biden_presidential_portrait.jpg")
-# x = transform_3(img)
-# x = x.unsqueeze(0)
-#
-# output = model(x)  # Forward pass
-# pred = torch.argmax(output, 1)  # Get predicted class if multi-class classification
-# print('Image predicted as', classes[pred])
+
+model = CNN()
+model.load_state_dict(torch.load("model.pth"))
+
+model.eval()
+
+print("started")
+img = Image.open("eranImages/withmask8_.png").convert('RGB')
+x = transform_3(img)
+x = x.unsqueeze(0)
+
+output = model(x)  # Forward pass
+pred = torch.argmax(output, 1)  # Get predicted class if multi-class classification
+print('Image predicted as', classes[pred])
 
