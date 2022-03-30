@@ -223,6 +223,15 @@ def isWearingMask(pillowImage):
 
     amount_found = len(found)
 
+    for (x, y, w, h) in found:
+        cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 2)
+        cv2.imwrite("eyes.png", img)
+    
+    
+    cv2.imshow('Video', img)
+    if cv2.waitKey(1) == 27:
+        exit(0)
+
     if amount_found != 0:
 
         img = pillowImage.convert('RGB')
@@ -275,7 +284,7 @@ async def machineLearning():
 async def getFrames():
     while True:
         ret, cvFrame = cap.read()
-        cv2.imshow('Video', cvFrame)
+        cv2.imshow('RAW Video', cvFrame)
         if cv2.waitKey(1) == 27:
             exit(0)
         await asyncio.sleep(0.01)
