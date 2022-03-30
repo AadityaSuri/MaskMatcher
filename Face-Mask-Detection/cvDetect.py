@@ -10,7 +10,7 @@ import torch.nn.functional as F
 
 def isWearingMask(image_path):
     transform = transforms.Compose(
-        [transforms.Resize((32, 32)),
+        [transforms.Resize((64, 64)),
          transforms.ToTensor(),
          transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
     )
