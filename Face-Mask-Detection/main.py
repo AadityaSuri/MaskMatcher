@@ -10,6 +10,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 from PIL import Image
 import cv2
+import asyncio
 
 transform = transforms.Compose(
     [transforms.Resize((64, 64)),
@@ -195,40 +196,65 @@ x = transform_3(img)
 x = x.unsqueeze(0)
 
 output = model(x)  # Forward pass
-pred = torch.argmax(output, 1)  # Get predicted class if multi-class classification
-print('Image predicted as', classes[pred])
+pred = F.softmax(output)
+# pred = torch.argmax(output, 1)  # Get predicted class if multi-class classification
+print('Image predicted as', pred)
 
 
 
-cap = cv2.VideoCapture('http://10.0.0.29:8081/')
+cap = cv2.VideoCapture('http://192.168.8.235:8081/')
 
 
-i=0
-while True:
-    ret, cvFrame = cap.read()
 
-    img = cv2.cvtColor(cvFrame, cv2.COLOR_BGR2RGB)
-    pillowImage = Image.fromarray(img)
+async def machineLearning():
+    i=1
+    while True:
+        # print("hello")
+        ret, cvFrame = cap.read()
+        # print("Hello2")
 
-    # Process the image using PIL
+        img = cv2.cvtColor(cvFrame, cv2.COLOR_BGR2RGB)
+        pillowImage = Image.fromarray(img)
 
-    pillowImage = pillowImage.crop((80,0,560,480))
+        # Process the image using PIL
 
-    # pillowImage.show()
-    # pillowSaved = pillowImage.save(f"images/webcamFrame{i}.png")
-    if (i%10 == 0):
-        pillowSaved = pillowImage.save(f"webcamImage.png")
-        print("Saved")
-        x = transform_3(pillowImage)
-        x = x.unsqueeze(0)
+        pillowImage = pillowImage.crop((80,0,560,480))
+        # print("Hello3")
 
-        output = model(x)  # Forward pass
-        pred = torch.argmax(output, 1)  # Get predicted class if multi-class classification
-        print('Image predicted as', classes[pred])
+        # pillowImage.show()
+        # pillowSaved = pillowImage.save(f"images/webcamFrame{i}.png")
+        if (i%10 == 0):
+            pillowSaved = pillowImage.save(f"webcamImage.png")
+            print("Saved")
+            x = transform_3(pillowImage)
+            x = x.unsqueeze(0)
 
-    cvImage = cv2.cvtColor(np.asarray(pillowImage), cv2.COLOR_RGB2BGR) 
-    cv2.imshow('Video', cvImage)
-    if cv2.waitKey(1) == ord('s'):
-        exit(0)
-    
-    i+=1
+            output = model(x)  # Forward pass
+            pred = F.softmax(output)
+            # pred = torch.argmax(output, 1)  # Get predicted class if multi-class classification
+            print('Image predicted as', pred)
+        
+        i+=1
+        # print(i)
+        await asyncio.sleep(0.1)
+
+async def getFrames():
+    while True:
+        ret, cvFrame = cap.read()
+        cv2.imshow('Video', cvFrame)
+        if cv2.waitKey(1) == 27:
+            exit(0)
+        await asyncio.sleep(0.01)
+
+
+async def main():
+    while True:
+        f1 = loop.create_task(getFrames())
+        f2 = loop.create_task(machineLearning())
+        await asyncio.wait([f1, f2])
+        # await asyncio.wait([f1])
+
+if __name__ == "__main__":
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
+    loop.close()
