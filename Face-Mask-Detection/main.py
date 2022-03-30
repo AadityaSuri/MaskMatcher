@@ -9,6 +9,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 from torch.utils.data import DataLoader
 from PIL import Image
+import cv2
 
 transform = transforms.Compose(
     [transforms.Resize((64, 64)),
@@ -31,14 +32,14 @@ transform_3_train = transforms.Compose(
 )
 batch_size = 16
 
-ds = tv.datasets.ImageFolder("./dataset/train_1", transform_3_train)
-# test_ds = tv.datasets.ImageFolder("./dataset/test", transform_3)
+# ds = tv.datasets.ImageFolder("./dataset/train_1", transform_3_train)
+# # test_ds = tv.datasets.ImageFolder("./dataset/test", transform_3)
 
-train_size = int(0.8 * len(ds))
-test_size = int(len(ds)) - train_size
-train_ds, test_ds = torch.utils.data.random_split(ds, [train_size, test_size])
-train_dl = DataLoader(train_ds, batch_size, shuffle=True, num_workers = 0)
-test_dl = DataLoader(test_ds, batch_size, shuffle=True, num_workers = 0)
+# train_size = int(0.8 * len(ds))
+# test_size = int(len(ds)) - train_size
+# train_ds, test_ds = torch.utils.data.random_split(ds, [train_size, test_size])
+# train_dl = DataLoader(train_ds, batch_size, shuffle=True, num_workers = 0)
+# test_dl = DataLoader(test_ds, batch_size, shuffle=True, num_workers = 0)
 
 classes = ("with_mask", "without_mask")
 # #
@@ -184,12 +185,12 @@ def test(dataloader, model, loss_fn):
 # #
 #
 model = CNN()
-model.load_state_dict(torch.load("model.pth"))
+model.load_state_dict(torch.load("NEWmodel.pth"))
 
 model.eval()
 
 print("started")
-img = Image.open("image-path-here").convert('RGB')
+img = Image.open("webcamImage.png").convert('RGB')
 x = transform_3(img)
 x = x.unsqueeze(0)
 
@@ -197,3 +198,37 @@ output = model(x)  # Forward pass
 pred = torch.argmax(output, 1)  # Get predicted class if multi-class classification
 print('Image predicted as', classes[pred])
 
+
+
+cap = cv2.VideoCapture('http://10.0.0.29:8081/')
+
+
+i=0
+while True:
+    ret, cvFrame = cap.read()
+
+    img = cv2.cvtColor(cvFrame, cv2.COLOR_BGR2RGB)
+    pillowImage = Image.fromarray(img)
+
+    # Process the image using PIL
+
+    pillowImage = pillowImage.crop((80,0,560,480))
+
+    # pillowImage.show()
+    # pillowSaved = pillowImage.save(f"images/webcamFrame{i}.png")
+    if (i%10 == 0):
+        pillowSaved = pillowImage.save(f"webcamImage.png")
+        print("Saved")
+        x = transform_3(pillowImage)
+        x = x.unsqueeze(0)
+
+        output = model(x)  # Forward pass
+        pred = torch.argmax(output, 1)  # Get predicted class if multi-class classification
+        print('Image predicted as', classes[pred])
+
+    cvImage = cv2.cvtColor(np.asarray(pillowImage), cv2.COLOR_RGB2BGR) 
+    cv2.imshow('Video', cvImage)
+    if cv2.waitKey(1) == ord('s'):
+        exit(0)
+    
+    i+=1

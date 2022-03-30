@@ -63,5 +63,5 @@ def isWearingMask(image_path):
 
         return -1
 
-# print(isWearingMask("image-path-goes-here"))
+print(isWearingMask("webcamImage.png"))
 
