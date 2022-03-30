@@ -10,7 +10,7 @@ import torch.nn.functional as F
 
 def isWearingMask(image_path):
     transform = transforms.Compose(
-        [transforms.Resize((64, 64)),
+        [transforms.Resize((32, 32)),
          transforms.ToTensor(),
          transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
     )
@@ -28,7 +28,7 @@ def isWearingMask(image_path):
 
     if amount_found != 0:
         model = CNN()
-        model.load_state_dict(torch.load("model.pth"))
+        model.load_state_dict(torch.load("NEWmodel.pth"))
 
         model.eval()
 
@@ -42,4 +42,4 @@ def isWearingMask(image_path):
     else:
         return -1
 
-# print(isWearingMask('bg.png'))
+print(isWearingMask('webcamImage.png'))

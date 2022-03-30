@@ -63,7 +63,7 @@ classes = ("with_mask", "without_mask")
 
 # Get cpu or gpu device for training.
 device = "cuda" if torch.cuda.is_available() else "cpu" #selects device to run NN on, if GPU is available, prints "cuda", otherwise "cpu"
-print("Using {} device".format(device)) # print statement for above device variable
+# print("Using {} device".format(device)) # print statement for above device variable
 
 class CNN(nn.Module):
     def __init__(self):
@@ -91,7 +91,7 @@ class CNN(nn.Module):
 
 #
 model = CNN().to(device)
-# print(model)
+print(model)
 
 loss_fn = nn.CrossEntropyLoss()
 optimizer = torch.optim.SGD(model.parameters(), lr = 1e-3, momentum=0.9)
@@ -185,22 +185,55 @@ def test(dataloader, model, loss_fn):
 
 # #
 #
+# model = CNN()
+# model.load_state_dict(torch.load("NEWmodel.pth"))
+
+# model.eval()
+
+# print("started")
+# img = Image.open("webcamImage.png").convert('RGB')
+# x = transform_3(img)
+# x = x.unsqueeze(0)
+
+# output = model(x)  # Forward pass
+# pred = F.softmax(output)
+# # pred = torch.argmax(output, 1)  # Get predicted class if multi-class classification
+# print('Image predicted as', pred)
+
 model = CNN()
 model.load_state_dict(torch.load("NEWmodel.pth"))
 
 model.eval()
 
-print("started")
-img = Image.open("webcamImage.png").convert('RGB')
-x = transform_3(img)
-x = x.unsqueeze(0)
+def isWearingMask(pillowImage):
+    transform = transforms.Compose(
+        [transforms.Resize((32, 32)),
+         transforms.ToTensor(),
+         transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
+    )
 
-output = model(x)  # Forward pass
-pred = F.softmax(output)
-# pred = torch.argmax(output, 1)  # Get predicted class if multi-class classification
-print('Image predicted as', pred)
+    classes = ("with_mask", "without_mask")
 
+    img = cv2.cvtColor(np.asarray(pillowImage), cv2.COLOR_RGB2BGR) 
+    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
+    eye_data = cv2.CascadeClassifier("haarcascade_eye.xml")
+    found = eye_data.detectMultiScale(img_gray, 1.1, 4)
+
+    amount_found = len(found)
+
+    if amount_found != 0:
+
+        img = pillowImage.convert('RGB')
+        x = transform(img)
+        x = x.unsqueeze(0)
+
+        output = model(x)
+        pred = F.softmax(output, dim=1)
+        return pred
+    else:
+        return -1
 
 cap = cv2.VideoCapture('http://192.168.8.235:8081/')
 
@@ -226,13 +259,14 @@ async def machineLearning():
         if (i%10 == 0):
             pillowSaved = pillowImage.save(f"webcamImage.png")
             print("Saved")
-            x = transform_3(pillowImage)
-            x = x.unsqueeze(0)
+            
+            # x = transform_3(pillowImage)
+            # x = x.unsqueeze(0)
 
-            output = model(x)  # Forward pass
-            pred = F.softmax(output)
+            # output = model(x)  # Forward pass
+            # pred = F.softmax(output)
             # pred = torch.argmax(output, 1)  # Get predicted class if multi-class classification
-            print('Image predicted as', pred)
+            print('Image predicted as', isWearingMask(pillowImage))
         
         i+=1
         # print(i)
