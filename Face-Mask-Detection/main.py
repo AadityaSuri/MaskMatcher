@@ -18,14 +18,20 @@ transform = transforms.Compose(
 )
 
 transform_3 = transforms.Compose(
-    [transforms.Resize((24, 24)),
-     #transforms.Grayscale(),
+    [transforms.Resize((32, 32)),
+     transforms.ToTensor(),
+     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
+)
+
+transform_3_train = transforms.Compose(
+    [transforms.Resize((32, 32)),
+     transforms.RandomRotation((-40, 40)),
      transforms.ToTensor(),
      transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
 )
 batch_size = 16
 
-ds = tv.datasets.ImageFolder("./dataset/train_1", transform_3)
+ds = tv.datasets.ImageFolder("./dataset/train_1", transform_3_train)
 # test_ds = tv.datasets.ImageFolder("./dataset/test", transform_3)
 
 train_size = int(0.8 * len(ds))
@@ -62,7 +68,7 @@ class CNN(nn.Module):
         super(CNN, self).__init__()
         self.flatten = nn.Flatten()
         self.linear_relu_stack = nn.Sequential(
-            nn.Linear(24*24*3, 512),
+            nn.Linear(32*32*3, 512),
             nn.ReLU(),
             nn.Linear(512, 512),
             nn.ReLU(),
@@ -133,7 +139,7 @@ def test(dataloader, model, loss_fn):
 # print("Done!")
 # torch.save(model.state_dict(), "model.pth")
 # print("Saved PyTorch Model State to model.pth")
-# #
+# # #
 # # # Using the model for some testing
 # model = CNN()
 # model.load_state_dict(torch.load("model.pth"))
@@ -151,7 +157,7 @@ def test(dataloader, model, loss_fn):
 #     x, y = test_ds[i][0], test_ds[i][1]
 #     # print(x.shape)
 #     with torch.no_grad():
-#         pred = model(x.reshape((1,24,24,3)))
+#         pred = model(x.reshape((1,32,32,3)))
 #         predicted, actual = classes[pred[0].argmax(0)], classes[y]
 #
 #         #if predicted != actual:
@@ -176,14 +182,14 @@ def test(dataloader, model, loss_fn):
 # print(counter/n)
 
 # #
-
+#
 model = CNN()
 model.load_state_dict(torch.load("model.pth"))
 
 model.eval()
 
 print("started")
-img = Image.open("eranImages/withmask8_.png").convert('RGB')
+img = Image.open("image-path-here").convert('RGB')
 x = transform_3(img)
 x = x.unsqueeze(0)
 
