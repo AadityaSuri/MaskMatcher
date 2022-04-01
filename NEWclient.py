@@ -7,7 +7,7 @@ import time
 from io import BytesIO
 import io
 
-cap = cv2.VideoCapture('http://192.168.8.235:8081/')
+cap = cv2.VideoCapture('http://192.168.8.165:8081/')
 
 async def hello():
     uri = "ws://10.93.48.157:443"
