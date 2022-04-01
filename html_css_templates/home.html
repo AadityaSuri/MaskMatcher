@@ -186,7 +186,7 @@
 
 setInterval(function reload () {
   document.getElementById("theImage").src = "/static/received_file123.png?" + new Date().getTime();
-}, 100);
+}, 500);
 
 setInterval(function getImage () {
   $.getJSON($SCRIPT_ROOT + '/_get_open', {
