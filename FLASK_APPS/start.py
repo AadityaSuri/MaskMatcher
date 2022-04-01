@@ -30,11 +30,11 @@ def create_app():
     login_manager.login_view = 'auth.login'
     login_manager.init_app(app)
 
+    # This runs the websockets server that gets the images and the neural network predictions
     @app.before_first_request
     def FINALserver_thread():
 
         async def hello(websocket):
-            print("WAITTTTTTTING")
             name = await websocket.recv()
             print(f"<<< {name}")
 
@@ -43,6 +43,8 @@ def create_app():
             await websocket.send(greeting)
             print(f">>> {greeting}")
 
+            # This handles getting the images and the prediction from the raspberry pi 
+            # and sending whether to lock the door or not back to the pi 
             import globalVars
             while True:
                 image = await websocket.recv()
@@ -68,6 +70,7 @@ def create_app():
         def FINALserver():
             asyncio.run(main())
 
+        # The websockets server is run as a seperate thread in order to keep it always running
         thread1 = threading.Thread(target=FINALserver)
         thread1.start()
 

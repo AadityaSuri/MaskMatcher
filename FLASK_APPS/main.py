@@ -6,6 +6,7 @@ from start import db
 
 main = Blueprint('main', __name__)
 
+# The global variables for the value of the buttons
 lock = 1;
 over = 0;
 mask = 0;
@@ -28,6 +29,7 @@ def home():
     if request.method == "GET":
         return render_template("home.html")
 
+    # update the values of the global variables depending on the value of the buttons
     print(request.json)
     if (request.json.get("maskModeVal") != None):
         mask = request.json.get("maskModeVal")
@@ -51,7 +53,8 @@ def get_open():
     print("lock is "+str(lock))
     print("mask is "+str(mask))
     print("over is "+str(over))
-
+    
+    # Logic for determining if to open the door or not based on the global variables
     if (over == 1):
         globalVars.doorLocked = False
     else:
@@ -80,7 +83,6 @@ def get_open():
 @main.route('/_get_image')
 def get_image():
     import globalVars
-    # print("GLOBAL VARS doorLocked is " + str(globalVars.doorLocked))
     if (not globalVars.doorLocked):
         return jsonify(result = "True")
     else:
