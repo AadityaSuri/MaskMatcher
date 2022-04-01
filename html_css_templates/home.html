@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<link rel="stylesheet" href="{{ url_for('static', filename= 'css/style.css') }}">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+  $SCRIPT_ROOT = {{ request.script_root|tojson }};
+</script>
+</head>
+
+<body>
+  <div class="whole-site">
+    <div class = "site-header"><span class="dot" id = "indic"></span>
+    <div class="site-header-text">
+
+      <p>MaskMatcher Dashboard</p></div>
+    </div>
+    <div class="site-row-1">
+    <img id = "theImage" src="/static/received_file123.png#123" alt="please work">
+    </div>
+    <div class = "site-spacing-1"></div>
+    <div class="site-row-2">
+      <div class="ck-button ck-button3" id = "maskModeBG">
+        <label>
+          <input type="checkbox" id="maskMode" name = "maskMode" onclick="maskModeToggle()" disabled = "disabled" method = "POST">
+          <span id="maskModeText" style="display:block">MaskMode OFF</span>
+        </label>
+      </div>
+      <div class="ck-button ck-button1" id = "lockModeBG">
+        <label>
+          <input type="checkbox" id="lockMode" name = "lockMode" onclick="lockModeToggle()" method = "POST">
+          <span id="lockModeText" style="display:block"> LOCKED </span>
+        </label>
+      </div>
+    </div>
+    <div class = "site-spacing-1"></div>
+    <div class="site-row-3" >
+      <div class="ck-button ck-button2" id ="overrideBG">
+        <label>
+          <input type="checkbox" id="override" name = "override" onclick="override()" method = "POST">
+          <span id="overridetext" style="display:block"> NOT OVERRIDDEN </span>
+        </label>
+      </div>
+    </div>
+    <div class = "site-spacing-1"></div>
+    <div class="site-row-3">
+      <a href="{{ url_for('auth.logout') }}">
+        <button>Log Out</button>
+     </a>
+    </div>
+  </div>
+</body>
+
+
+<script>
+  function maskModeToggle() {
+    var maskBox = document.getElementById("maskMode");
+    var lockBox = document.getElementById("lockMode");
+    var override = document.getElementById("override")
+    var text = document.getElementById("maskModeText");
+    if (maskBox.checked == true) {
+      text.textContent = "MaskMode  ON";
+      backgroundColor();
+    } else {
+      text.textContent = "MaskMode OFF";
+      backgroundColor();
+    }
+  }
+
+  function lockModeToggle() {
+    var maskBox = document.getElementById("maskMode");
+    var lockBox = document.getElementById("lockMode");
+    var override = document.getElementById("override")
+    var text = document.getElementById("lockModeText");
+    if (lockBox.checked == true) {
+      text.textContent = "UNLOCKED"
+      maskBox.disabled = false;
+      backgroundColor();
+    } else {
+      text.textContent = " LOCKED ";
+      maskBox.disabled = true;
+      backgroundColor();
+      // document.getElementById("maskModeBG").style.backgroundColor = "grey";
+    }
+  }
+
+  function override() {
+    
+    var maskBox = document.getElementById("maskMode");
+    var lockBox = document.getElementById("lockMode");
+    var override = document.getElementById("override")
+    var text = document.getElementById("overridetext");
+    if (override.checked == true) {
+      text.textContent = "LOCK OVERRIDDEN"
+      maskBox.disabled = true;
+      lockBox.disabled = true;
+      backgroundColor();      
+    } else {
+      text.textContent = "NOT OVERRIDDEN";
+      document.getElementById("maskMode").disabled = false;
+      document.getElementById("lockMode").disabled = false;
+      backgroundColor();
+    }
+  }
+
+  function backgroundColor() {
+    var maskBox = document.getElementById("maskMode");
+    var lockBox = document.getElementById("lockMode");
+    var override = document.getElementById("override")
+
+    var maskBoxBG = document.getElementById("maskModeBG");
+    var lockBoxBG = document.getElementById("lockModeBG");
+    var overrideBG = document.getElementById("overrideBG");
+    
+    maskBoxBG.style.background = override.checked ? "grey" : (lockBox.checked ? (maskBox.checked ? "#88FF88" : "red") : "grey");
+    lockBoxBG.style.background = override.checked ? "grey" : (lockBox.checked ? "red" : "#88FF88");
+    overrideBG.style.background = override.checked ? "red" : "#88FF88";
+
+
+  }
+
+
+
+
+</script>
+
+<script>
+  function updateDoor(){
+    var text = document.getElementById("notif");
+    if (doorval){
+      text.textContent = "UNLOCKED";
+    } else {
+      text.textContent = "LOCKED";
+    }
+  }
+</script>
+
+<script>
+  document.getElementById("maskMode")
+    .addEventListener("click", e => {
+      fetch("http://cpen291-29.ece.ubc.ca/home", {
+          method: "POST",
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            maskModeVal: Number(e.target.checked)
+          })
+        })
+
+    })
+  ;
+  document.getElementById("lockMode")
+    .addEventListener("click", e => {
+      fetch("http://cpen291-29.ece.ubc.ca/home", {
+          method: "POST",
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            lockModeVal: Number(e.target.checked)
+          })
+        })
+    })
+  ;
+  document.getElementById("override")
+    .addEventListener("click", e => {
+      fetch("http://cpen291-29.ece.ubc.ca/home", {
+          method: "POST",
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            overrideVal: Number(e.target.checked)
+          })
+        })
+    })
+  
+</script>
+
+<script>
+
+setInterval(function reload () {
+  document.getElementById("theImage").src = "/static/received_file123.png?" + new Date().getTime();
+}, 100);
+
+setInterval(function getImage () {
+  $.getJSON($SCRIPT_ROOT + '/_get_open', {
+    a: $('input[name="a"]').val(),
+    b: $('input[name="b"]').val()
+  }, function(data) {
+    // console.log(data.result);
+    if (data.result == "True"){
+      // console.log("get_open is it is true")
+    } else {
+      // console.log("get_open is it is false")
+    }
+  });
+  return false;
+}, 500);
+
+  setInterval(function calculate () {
+  $.getJSON($SCRIPT_ROOT + '/_get_image', {
+    a: $('input[name="a"]').val(),
+    b: $('input[name="b"]').val()
+  }, function(data) {
+    console.log("x is: " + data.result);
+    if (data.result == "True"){
+      document.getElementById("indic").style.background= "#88FF88";
+    } else {
+      document.getElementById("indic").style.background = "red";
+    }
+  });
+  return false;
+}, 2000);
+  </script>
+</html>
