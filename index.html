@@ -3,19 +3,21 @@
 
 <head>
 <link rel="stylesheet" href="{{ url_for('static', filename= 'css/style.css') }}">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+  $SCRIPT_ROOT = {{ request.script_root|tojson }};
+</script>
 </head>
 
 <body>
   <div class="whole-site">
+    <div class = "site-header"><span class="dot" id = "indic"></span>
     <div class="site-header-text">
-      <p>MaskMatcher Dashboard</p>
+
+      <p>MaskMatcher Dashboard</p></div>
     </div>
     <div class="site-row-1">
-      <!-- <iframe width="800" height="600"
-      src="https://www.youtube.com/embed/tgbNymZ7vqY">
-      </iframe> -->
-      <!-- <img src="../../var/www/python/received_file123.png"> -->
-      <img src="/static/css/test.png" alt="please work">
+    <img id = "theImage" src="/static/received_file123.png#123" alt="please work">
     </div>
     <div class = "site-spacing-1"></div>
     <div class="site-row-2">
@@ -40,8 +42,12 @@
           <span id="overridetext" style="display:block"> NOT OVERRIDDEN </span>
         </label>
       </div>
-
-
+    </div>
+    <div class = "site-spacing-1"></div>
+    <div class="site-row-3">
+      <a href="{{ url_for('auth.logout') }}">
+        <button>Log Out</button>
+     </a>
     </div>
   </div>
 </body>
@@ -119,12 +125,21 @@
 
 </script>
 
-
+<script>
+  function updateDoor(){
+    var text = document.getElementById("notif");
+    if (doorval){
+      text.textContent = "UNLOCKED";
+    } else {
+      text.textContent = "LOCKED";
+    }
+  }
+</script>
 
 <script>
   document.getElementById("maskMode")
     .addEventListener("click", e => {
-      fetch("http://127.0.0.1:5000/", {
+      fetch("http://cpen291-29.ece.ubc.ca/home", {
           method: "POST",
           headers: {
             "Accept": "application/json",
@@ -134,25 +149,12 @@
             maskModeVal: Number(e.target.checked)
           })
         })
-        .then(res => {
-          if (!res.ok) {
-            throw Error(res.status);
-          }
 
-          return res.json();
-        })
-        .then(({data: {val}}) => {
-          console.log(val);
-          const res = document.querySelector(".result");
-          res.innerText = `client got: ${val}`;
-        })
-        .catch(err => console.error(err))
-      ;
     })
   ;
   document.getElementById("lockMode")
     .addEventListener("click", e => {
-      fetch("http://127.0.0.1:5000/", {
+      fetch("http://cpen291-29.ece.ubc.ca/home", {
           method: "POST",
           headers: {
             "Accept": "application/json",
@@ -162,25 +164,11 @@
             lockModeVal: Number(e.target.checked)
           })
         })
-        .then(res => {
-          if (!res.ok) {
-            throw Error(res.status);
-          }
-
-          return res.json();
-        })
-        .then(({data: {val}}) => {
-          console.log(val);
-          const res = document.querySelector(".result");
-          res.innerText = `client got: ${val}`;
-        })
-        .catch(err => console.error(err))
-      ;
     })
   ;
   document.getElementById("override")
     .addEventListener("click", e => {
-      fetch("http://127.0.0.1:5000/", {
+      fetch("http://cpen291-29.ece.ubc.ca/home", {
           method: "POST",
           headers: {
             "Accept": "application/json",
@@ -190,21 +178,44 @@
             overrideVal: Number(e.target.checked)
           })
         })
-        .then(res => {
-          if (!res.ok) {
-            throw Error(res.status);
-          }
-
-          return res.json();
-        })
-        .then(({data: {val}}) => {
-          console.log(val);
-          const res = document.querySelector(".result");
-          res.innerText = `client got: ${val}`;
-        })
-        .catch(err => console.error(err))
-      ;
     })
-  ;
+  
 </script>
+
+<script>
+
+setInterval(function reload () {
+  document.getElementById("theImage").src = "/static/received_file123.png?" + new Date().getTime();
+}, 100);
+
+setInterval(function getImage () {
+  $.getJSON($SCRIPT_ROOT + '/_get_open', {
+    a: $('input[name="a"]').val(),
+    b: $('input[name="b"]').val()
+  }, function(data) {
+    // console.log(data.result);
+    if (data.result == "True"){
+      // console.log("get_open is it is true")
+    } else {
+      // console.log("get_open is it is false")
+    }
+  });
+  return false;
+}, 500);
+
+  setInterval(function calculate () {
+  $.getJSON($SCRIPT_ROOT + '/_get_image', {
+    a: $('input[name="a"]').val(),
+    b: $('input[name="b"]').val()
+  }, function(data) {
+    console.log("x is: " + data.result);
+    if (data.result == "True"){
+      document.getElementById("indic").style.background= "#88FF88";
+    } else {
+      document.getElementById("indic").style.background = "red";
+    }
+  });
+  return false;
+}, 2000);
+  </script>
 </html>

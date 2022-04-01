@@ -17,9 +17,37 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torch.utils.data import DataLoader
+import RPi.GPIO as GPIO
+import pigpio
 
 
-cap = cv2.VideoCapture('http://10.0.0.29:8081/')
+# LED AND MOTOR VARIABLES AND CONFIG
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+
+REDLED = 22
+GREENLED = 27
+SERVO = 17
+
+
+GPIO.setup(REDLED, GPIO.OUT)
+GPIO.setup(GREENLED, GPIO.OUT)
+
+val = -1
+
+pwm = pigpio.pi() 
+pwm.set_mode(SERVO, pigpio.OUTPUT)
+ 
+pwm.set_PWM_frequency( SERVO, 50 )
+pwm.set_servo_pulsewidth( SERVO, 500 ) ;
+
+
+
+GPIO.output(REDLED,GPIO.LOW)
+GPIO.output(GREENLED,GPIO.LOW)
+
+
+cap = cv2.VideoCapture('http://127.0.0.1:8081/')
 
 # BEGIN NEURAL NETWORK FUNCTIONS
 
@@ -103,7 +131,7 @@ def isWearingMask(cvImage):
 
 
 async def connectToServer():
-    uri = "ws://10.0.0.29:4430"
+    uri = "ws://10.93.48.157:443"
     async with websockets.connect(uri) as websocket:
         # await asyncio.sleep(1)
         name = input("What's your name? ")
@@ -136,9 +164,20 @@ async def connectToServer():
                     await websocket.send(str(prediction.detach().numpy()[0][0]))
                 else:
                     await websocket.send(str(-1))
-
+                
                 doorCommand = await websocket.recv()
-                print(doorCommand)
+                print("doorLocked is" + doorCommand)
+                print(bool(doorCommand))
+                if doorCommand == "True":
+                    print('door is locked')
+                    pwm.set_servo_pulsewidth( SERVO, 1500 ) ;
+                    GPIO.output(REDLED,GPIO.HIGH)
+                    GPIO.output(GREENLED,GPIO.LOW)
+                else:
+                    print('door is NOT locked')
+                    pwm.set_servo_pulsewidth( SERVO, 500 ) ;
+                    GPIO.output(REDLED,GPIO.LOW)
+                    GPIO.output(GREENLED,GPIO.HIGH)
 
                 print("Sent")
             
